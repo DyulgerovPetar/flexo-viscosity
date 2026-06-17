@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#111318">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Флексо DIN 4мм">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Флексо · Вискозитет DIN 4мм</title>
+
+<!-- Inline SVG icon as data URI for iOS home screen -->
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='32' fill='%23111318'/%3E%3Ctext x='96' y='115' font-family='monospace' font-size='90' font-weight='bold' fill='%233b82f6' text-anchor='middle'%3E4%3C/text%3E%3Ctext x='96' y='155' font-family='monospace' font-size='22' fill='%236b7280' text-anchor='middle'%3Emm%3C/text%3E%3C/svg%3E">
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@300;400;600;700&display=swap');
+
+:root {
+  --bg: #111318;
+  --surface: #1a1d24;
+  --surface2: #22262f;
+  --border: #2e3340;
+  --text: #e8eaf0;
+  --muted: #6b7280;
+  --accent: #3b82f6;
+  --accent-dim: rgba(59,130,246,0.15);
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,0.12);
+  --amber: #f59e0b;
+  --amber-dim: rgba(245,158,11,0.12);
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.12);
+  --cyan: #06b6d4;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+body {
+  font-family: 'IBM Plex Sans Condensed', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding: env(safe-area-inset-top, 1rem) 1rem env(safe-area-inset-bottom, 3rem);
+  padding-top: calc(env(safe-area-inset-top, 0px) + 1.2rem);
+}
+
+/* INSTALL BANNER */
+#installBanner {
+  display: none;
+  max-width: 860px;
+  margin: 0 auto .75rem;
+  background: var(--accent-dim);
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  padding: .6rem .85rem;
+  font-size: .78rem;
+  color: var(--accent);
+  align-items: center;
+  gap: .75rem;
+  flex-wrap: wrap;
+}
+#installBanner button {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: .3rem .7rem;
+  font-size: .75rem;
+  font-family: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+/* OFFLINE BADGE */
+#offlineBadge {
+  display: none;
+  position: fixed;
+  top: env(safe-area-inset-top, 0);
+  left: 0; right: 0;
+  background: var(--amber);
+  color: #000;
+  text-align: center;
+  font-size: .7rem;
+  font-weight: 600;
+  padding: .3rem;
+  z-index: 999;
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+.header {
+  max-width: 860px;
+  margin: 0 auto 1.25rem;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: .85rem;
+}
+
+.eyebrow {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: .58rem;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: .15rem;
+}
+
+h1 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+h1 em { color: var(--accent); font-style: normal; }
+
+.subtitle {
+  font-size: .72rem;
+  color: var(--muted);
+  margin-top: .1rem;
+}
+
+/* TABS */
+.tabs {
+  max-width: 860px;
+  margin: 0 auto .85rem;
+  display: flex;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.tab {
+  flex: 1;
+  padding: .55rem .4rem;
+  text-align: center;
+  font-size: .72rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: var(--surface);
+  color: var(--muted);
+  border: none;
+  font-family: inherit;
+  letter-spacing: .04em;
+  transition: background .1s, color .1s;
+  border-right: 1px solid var(--border);
+}
+.tab:last-child { border-right: none; }
+.tab.active { background: var(--accent); color: #fff; }
+
+/* PANELS */
+.panel { display: none; }
+.panel.active { display: block; }
+
+/* CARD */
+.card {
+  max-width: 860px;
+  margin: 0 auto .75rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 1rem;
+}
+.card-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: .58rem;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: .6rem;
+}
+
+/* CALC */
+.calc-big {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  margin-bottom: .75rem;
+}
+.sec-input {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 2.4rem;
+  font-weight: 600;
+  width: 100px;
+  background: var(--surface2);
+  border: 2px solid var(--border);
+  color: var(--accent);
+  padding: .3rem .5rem;
+  border-radius: 6px;
+  outline: none;
+  -moz-appearance: textfield;
+  text-align: center;
+}
+.sec-input::-webkit-outer-spin-button,
+.sec-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+.sec-input:focus { border-color: var(--accent); }
+.sec-unit { font-size: .78rem; color: var(--muted); font-family: 'IBM Plex Mono', monospace; line-height: 1.5; }
+
+/* +/- buttons for mobile */
+.nudge-row { display: flex; gap: .4rem; margin-bottom: .7rem; }
+.nudge {
+  flex: 1;
+  padding: .55rem;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 5px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background .1s;
+}
+.nudge:active { background: var(--border); }
+
+.result-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: .4rem;
+  margin-bottom: .6rem;
+}
+.r-pill {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: .45rem .5rem;
+  text-align: center;
+}
+.r-pill .rl { font-size: .58rem; color: var(--muted); font-family: 'IBM Plex Mono', monospace; margin-bottom: .1rem; }
+.r-pill .rv { font-family: 'IBM Plex Mono', monospace; font-size: 1rem; font-weight: 600; }
+
+.zone-banner {
+  padding: .5rem .75rem;
+  border-radius: 5px;
+  font-size: .82rem;
+  font-weight: 600;
+  border-left: 3px solid;
+  display: none;
+}
+
+/* ZONES LIST */
+.zones-list { display: flex; flex-direction: column; gap: .5rem; }
+.zone-row { display: flex; gap: .6rem; align-items: flex-start; font-size: .78rem; }
+.zone-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; margin-top: .3rem; }
+.zone-row strong { font-weight: 600; display: block; margin-bottom: .1rem; }
+.zone-row p { font-size: .7rem; color: var(--muted); line-height: 1.35; }
+
+/* PH */
+.ph-badge {
+  display: inline-block;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: .8rem;
+  padding: .25rem .55rem;
+  border-radius: 4px;
+  background: rgba(6,182,212,0.15);
+  color: var(--cyan);
+  border: 1px solid rgba(6,182,212,0.3);
+  margin-bottom: .5rem;
+}
+.ph-note { font-size: .73rem; color: var(--muted); line-height: 1.55; }
+.ph-note strong { color: var(--text); }
+
+/* TABLE */
+.table-wrap {
+  max-width: 860px;
+  margin: 0 auto;
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+table { width: 100%; border-collapse: collapse; font-family: 'IBM Plex Mono', monospace; font-size: .72rem; }
+thead tr { background: var(--surface2); border-bottom: 1px solid var(--border); }
+thead th {
+  padding: .5rem .55rem;
+  text-align: left;
+  font-size: .58rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  white-space: nowrap;
+}
+thead th:not(:first-child) { text-align: right; }
+tbody tr { border-bottom: 1px solid var(--border); }
+tbody tr:last-child { border-bottom: none; }
+tbody tr.active-row { background: var(--accent-dim); outline: 1px solid var(--accent); outline-offset: -1px; }
+td { padding: .42rem .55rem; vertical-align: middle; }
+td:not(:first-child) { text-align: right; }
+td:first-child { font-weight: 600; font-size: .82rem; }
+.zone-tag {
+  display: inline-block;
+  font-size: .56rem;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  padding: .12rem .35rem;
+  border-radius: 3px;
+  font-weight: 600;
+  font-family: 'IBM Plex Sans Condensed', sans-serif;
+}
+
+.footnote {
+  max-width: 860px;
+  margin: .65rem auto 0;
+  font-size: .63rem;
+  color: var(--muted);
+  line-height: 1.5;
+  border-top: 1px solid var(--border);
+  padding-top: .5rem;
+}
+.footnote strong { color: var(--text); }
+</style>
+</head>
+<body>
+
+<div id="offlineBadge">⚠ ОФЛАЙН РЕЖИМ — данните са кеширани</div>
+<div id="installBanner">
+  <span>📲 Инсталирай като приложение на телефона</span>
+  <button id="installBtn">Инсталирай</button>
+  <button onclick="document.getElementById('installBanner').style.display='none'" style="background:transparent;color:var(--muted);border:none;cursor:pointer;font-size:.8rem">✕</button>
+</div>
+
+<div class="header">
+  <div class="eyebrow">Flint Group · AQUACode / HexaCode · Bobst MasterFlex</div>
+  <h1>Вискозитет · <em>Флексо Велпапе</em></h1>
+  <p class="subtitle">Чаша DIN 4мм · Водобазирани мастила · Постпечат велпапе</p>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab active" onclick="showTab('calc')">🧮 Калкулатор</button>
+  <button class="tab" onclick="showTab('zones')">🎯 Зони</button>
+  <button class="tab" onclick="showTab('ph')">⚗️ pH</button>
+  <button class="tab" onclick="showTab('table')">📊 Таблица</button>
+</div>
+
+<!-- CALC PANEL -->
+<div class="panel active" id="panel-calc">
+  <div class="card">
+    <div class="card-label">Въведи секунди → получи вискозитет</div>
+    <div class="calc-big">
+      <input class="sec-input" id="secIn" type="number" min="8" max="120" placeholder="22" inputmode="decimal" />
+      <span class="sec-unit">секунди<br>DIN 4мм</span>
+    </div>
+    <!-- +/- nudge buttons for easy mobile use -->
+    <div class="nudge-row">
+      <button class="nudge" onclick="nudge(-1)">−1s</button>
+      <button class="nudge" onclick="nudge(-0.5)">−0.5s</button>
+      <button class="nudge" onclick="nudge(0.5)">+0.5s</button>
+      <button class="nudge" onclick="nudge(1)">+1s</button>
+    </div>
+    <div class="result-grid">
+      <div class="r-pill"><div class="rl">Динамичен</div><div class="rv" id="rEta">—</div><div class="rl">mPa·s</div></div>
+      <div class="r-pill"><div class="rl">Кинематичен</div><div class="rv" id="rNu">—</div><div class="rl">mm²/s</div></div>
+      <div class="r-pill"><div class="rl">~cP</div><div class="rv" id="rCp">—</div><div class="rl">centipoise</div></div>
+    </div>
+    <div class="zone-banner" id="zoneBanner"></div>
+  </div>
+  <div class="card">
+    <div class="card-label">Bobst MasterFlex · Бързи настройки</div>
+    <p class="ph-note">
+      <strong>Оптимална зона:</strong> 22–28s за CMYK и плътни покрития<br>
+      <strong>Висока скорост (250+ m/min):</strong> снижавай с 2–3s<br>
+      <strong>Без сушилня:</strong> 22–26s (по-течно = по-бърза абсорбция)<br>
+      <strong>Груб liner / recycled:</strong> 28–35s<br>
+      <strong>Температура:</strong> 20–25°C · ±2°C = ±1–2s отклонение!
+    </p>
+  </div>
+</div>
+
+<!-- ZONES PANEL -->
+<div class="panel" id="panel-zones">
+  <div class="card">
+    <div class="card-label">Работни зони · DIN 4мм · Велпапе постпечат</div>
+    <div class="zones-list">
+      <div class="zone-row">
+        <div class="zone-dot" style="background:var(--red)"></div>
+        <div><strong style="color:var(--red)">Под 16s — Прекалено течно</strong>
+        <p>Разтичане, лош рубинг, неравен цвят, замърсяване анилокс, пилинг</p></div>
+      </div>
+      <div class="zone-row">
+        <div class="zone-dot" style="background:var(--amber)"></div>
+        <div><strong style="color:var(--amber)">16–20s — Долна граница</strong>
+        <p>Линии, текст, светли тонове; нисколинеатурен анилокс 100–150 lpi</p></div>
+      </div>
+      <div class="zone-row">
+        <div class="zone-dot" style="background:var(--green)"></div>
+        <div><strong style="color:var(--green)">20–28s — ОПТИМАЛНА ЗОНА ✓</strong>
+        <p>Flint HexaCode/AQUACode препоръчва 22–28s. CMYK процес, плътни покрития, 150–300 lpi анилокс</p></div>
+      </div>
+      <div class="zone-row">
+        <div class="zone-dot" style="background:var(--amber)"></div>
+        <div><strong style="color:var(--amber)">28–40s — Горна граница</strong>
+        <p>Груби субстрати, recycled liner, металик, OPV, специални мастила</p></div>
+      </div>
+      <div class="zone-row">
+        <div class="zone-dot" style="background:var(--red)"></div>
+        <div><strong style="color:var(--red)">Над 40s — Прекалено гъсто</strong>
+        <p>Запушване на анилокс, вал следи, неравен трансфер, пенене, лоша резолюция</p></div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-label">Приложения по зони</div>
+    <p class="ph-note" style="line-height:1.8">
+      <strong>16–18s</strong> · Лакове, грунд, прайм коат<br>
+      <strong>18–22s</strong> · Линии, текст, нископокривни<br>
+      <strong>22–24s</strong> · CMYK процес, линейни цветове<br>
+      <strong>24–28s</strong> · Плътни покрития, Pantone солид<br>
+      <strong>28–35s</strong> · Груб субстрат, recycled liner<br>
+      <strong>35–40s</strong> · Металик, специални, OPV вернис
+    </p>
+  </div>
+</div>
+
+<!-- PH PANEL -->
+<div class="panel" id="panel-ph">
+  <div class="card">
+    <div class="card-label">pH контрол · Flint Group AQUACode / HexaCode</div>
+    <div class="ph-badge">pH 8.5 – 9.5 · Задължителен диапазон</div>
+    <p class="ph-note">
+      <strong>При pH под 8.5:</strong> акриловата смола се утаява → вискозитетът скача неконтролируемо → запушване на анилокс<br><br>
+      <strong>При pH над 9.5:</strong> пенене, лоша адхезия на мастилото върху субстрата<br><br>
+      <strong>⚠ Коригирай pH ПРЕДИ вискозитета!</strong><br><br>
+      <strong>Коректив:</strong> Flint TriaCode добавки / одобрен амонячен разтворител<br><br>
+      <strong>Вода:</strong> добавяй само деминерализирана — чешмяната вода съдържа калций и понижава pH<br><br>
+      <strong>Измерване:</strong> pH + вискозитет → на всеки 30–45 мин. при активна работа
+    </p>
+  </div>
+  <div class="card">
+    <div class="card-label">Ефект на температурата върху вискозитета</div>
+    <p class="ph-note" style="line-height:1.8">
+      <strong>20°C</strong> → базов вискозитет (референция)<br>
+      <strong>22°C</strong> → −0.5 до −1s (по-течно)<br>
+      <strong>25°C</strong> → −1.5 до −2s<br>
+      <strong>30°C</strong> → −3 до −4s (значително по-течно)<br>
+      <strong>15°C</strong> → +2 до +3s (по-гъсто зиме!)<br><br>
+      Измервай при постоянна температура на мастилото.<br>
+      Пресзалата: оптимално 20–24°C, 45–55% влажност.
+    </p>
+  </div>
+</div>
+
+<!-- TABLE PANEL -->
+<div class="panel" id="panel-table">
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Секунди</th>
+          <th>mPa·s</th>
+          <th>mm²/s</th>
+          <th>Зона</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </div>
+  <div class="footnote">
+    <strong>Формула DIN 4мм:</strong> ν = 4.18 × t − 17.5 mm²/s · η = ν × 1.02 mPa·s<br>
+    <strong>Flint Group AQUACode/HexaCode:</strong> препоръчва 22–28s DIN 4мм за corrugated post-print
+  </div>
+</div>
+
+<script>
+// ── CORE CALC ──
+const DENSITY = 1.02;
+function calc(t) {
+  const nu = 4.18 * t - 17.5;
+  const eta = nu * DENSITY;
+  return { nu: Math.round(nu * 10) / 10, eta: Math.round(eta * 10) / 10 };
+}
+function getZone(t) {
+  if (t < 16)  return { label:'Прекалено течно ↓', color:'var(--red)', bg:'var(--red-dim)', tag:'НИСКО ↓' };
+  if (t < 20)  return { label:'Долна граница', color:'var(--amber)', bg:'var(--amber-dim)', tag:'ДОЛНА' };
+  if (t <= 28) return { label:'Оптимална · Flint / Bobst ✓', color:'var(--green)', bg:'var(--green-dim)', tag:'ОПТИМАЛНО ✓' };
+  if (t <= 40) return { label:'Горна граница', color:'var(--amber)', bg:'var(--amber-dim)', tag:'ГОРНА' };
+  return { label:'Прекалено гъсто ↑', color:'var(--red)', bg:'var(--red-dim)', tag:'ВИСОКО ↑' };
+}
+
+// ── TABS ──
+function showTab(name) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  const tabs = ['calc','zones','ph','table'];
+  document.querySelectorAll('.tab')[tabs.indexOf(name)].classList.add('active');
+}
+
+// ── TABLE BUILD ──
+const tbody = document.getElementById('tableBody');
+const tableRows = [];
+for (let t = 10; t <= 60; t += 2) {
+  const { nu, eta } = calc(t);
+  const zone = getZone(t);
+  const tr = document.createElement('tr');
+  tr.dataset.t = t;
+  const isOpt = t >= 20 && t <= 28;
+  tr.innerHTML = `
+    <td style="${isOpt?'color:var(--green)':''}">${t}s</td>
+    <td>${eta > 0 ? eta : '—'}</td>
+    <td>${nu > 0 ? nu : '—'}</td>
+    <td><span class="zone-tag" style="background:${zone.bg};color:${zone.color};border:1px solid ${zone.color}44">${zone.tag}</span></td>
+  `;
+  tbody.appendChild(tr);
+  tableRows.push({ t, tr });
+}
+
+// ── CALCULATOR ──
+const secIn = document.getElementById('secIn');
+const zoneBanner = document.getElementById('zoneBanner');
+
+function updateCalc() {
+  const val = parseFloat(secIn.value);
+  tableRows.forEach(r => r.tr.classList.remove('active-row'));
+  if (!val || val < 8) {
+    zoneBanner.style.display = 'none';
+    ['rEta','rNu','rCp'].forEach(id => document.getElementById(id).textContent = '—');
+    return;
+  }
+  const { nu, eta } = calc(val);
+  const zone = getZone(val);
+  document.getElementById('rEta').textContent = eta > 0 ? eta : '—';
+  document.getElementById('rNu').textContent  = nu  > 0 ? nu  : '—';
+  document.getElementById('rCp').textContent  = eta > 0 ? eta : '—';
+  zoneBanner.style.display = 'block';
+  zoneBanner.style.background = zone.bg;
+  zoneBanner.style.borderColor = zone.color;
+  zoneBanner.style.color = zone.color;
+  zoneBanner.textContent = zone.label + (eta > 0 ? ` · ${eta} mPa·s` : '');
+  const closest = tableRows.reduce((p,c) => Math.abs(c.t-val) < Math.abs(p.t-val) ? c : p);
+  closest.tr.classList.add('active-row');
+}
+
+secIn.addEventListener('input', updateCalc);
+
+function nudge(delta) {
+  const cur = parseFloat(secIn.value) || 22;
+  secIn.value = Math.max(8, Math.min(120, Math.round((cur + delta) * 2) / 2));
+  updateCalc();
+}
+
+// ── OFFLINE DETECTION ──
+function updateOnline() {
+  document.getElementById('offlineBadge').style.display = navigator.onLine ? 'none' : 'block';
+}
+window.addEventListener('online', updateOnline);
+window.addEventListener('offline', updateOnline);
+updateOnline();
+
+// ── PWA: SERVICE WORKER (inline via blob) ──
+if ('serviceWorker' in navigator) {
+  const swCode = `
+const CACHE = 'flexo-din4-v1';
+const ASSETS = [self.location.href];
+self.addEventListener('install', e => {
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));
+  self.skipWaiting();
+});
+self.addEventListener('activate', e => {
+  e.waitUntil(caches.keys().then(keys =>
+    Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
+  ));
+  self.clients.claim();
+});
+self.addEventListener('fetch', e => {
+  e.respondWith(caches.match(e.request).then(r => r || fetch(e.request).catch(() => caches.match(e.request))));
+});
+  `;
+  const blob = new Blob([swCode], { type: 'application/javascript' });
+  const swUrl = URL.createObjectURL(blob);
+  navigator.serviceWorker.register(swUrl).catch(() => {});
+}
+
+// ── PWA: INSTALL PROMPT ──
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  document.getElementById('installBanner').style.display = 'flex';
+});
+document.getElementById('installBtn').addEventListener('click', async () => {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  const { outcome } = await deferredPrompt.userChoice;
+  deferredPrompt = null;
+  document.getElementById('installBanner').style.display = 'none';
+});
+window.addEventListener('appinstalled', () => {
+  document.getElementById('installBanner').style.display = 'none';
+});
+
+// ── PWA MANIFEST (inline) ──
+const manifest = {
+  name: 'Флексо Вискозитет DIN 4мм',
+  short_name: 'Флексо DIN4',
+  description: 'Калкулатор за вискозитет на флексо мастила — Flint Group / Bobst MasterFlex',
+  start_url: './',
+  display: 'standalone',
+  background_color: '#111318',
+  theme_color: '#111318',
+  lang: 'bg',
+  icons: [
+    { src: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='32' fill='%23111318'/%3E%3Ctext x='96' y='115' font-family='monospace' font-size='90' font-weight='bold' fill='%233b82f6' text-anchor='middle'%3E4%3C/text%3E%3Ctext x='96' y='155' font-family='monospace' font-size='22' fill='%236b7280' text-anchor='middle'%3Emm%3C/text%3E%3C/svg%3E", sizes: '192x192', type: 'image/svg+xml' }
+  ]
+};
+const manifestBlob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+const manifestUrl = URL.createObjectURL(manifestBlob);
+const link = document.createElement('link');
+link.rel = 'manifest';
+link.href = manifestUrl;
+document.head.appendChild(link);
+</script>
+</body>
+</html>
